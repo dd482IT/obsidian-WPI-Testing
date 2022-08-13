@@ -19,12 +19,21 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * {@code Hologram} is a {@link ClientEntity} that shows lines of text, like a "hologram".
+ */
 public class Hologram implements ClientEntity {
 
     private final @NonNull List<Message> lines;
     private final @NonNull List<ArmorStand> stands;
     private final double lineHeight = 0.5;
 
+    /**
+     * Constructs {@code Hologram}.
+     *
+     * @param location the hologram's location
+     * @param lines the hologram's lines
+     */
     public Hologram(final @NonNull Location location,
                     final @NonNull List<Message> lines) {
         this.lines = lines;
@@ -55,6 +64,19 @@ public class Hologram implements ClientEntity {
         }
     }
 
+    public void hide(final @NonNull Player player) {
+        final ServerPlayer sPlayer = ((CraftPlayer) player).getHandle();
+        for (final ArmorStand stand : this.stands) {
+            sPlayer.connection.send(new ClientboundRemoveEntitiesPacket(stand.getId()));
+        }
+    }
+
+    /**
+     * Moves the hologram for a player.
+     *
+     * @param player the player
+     * @param location the location
+     */
     public void moveTo(final @NonNull Player player,
                        final @NonNull Location location) {
         final ServerPlayer sPlayer = ((CraftPlayer) player).getHandle();
@@ -63,13 +85,6 @@ public class Hologram implements ClientEntity {
             final ArmorStand stand = this.stands.get(i);
             stand.moveTo(location.getX(), location.getY(), location.getZ());
             sPlayer.connection.send(new ClientboundTeleportEntityPacket(stand));
-        }
-    }
-
-    public void hide(final @NonNull Player player) {
-        final ServerPlayer sPlayer = ((CraftPlayer) player).getHandle();
-        for (final ArmorStand stand : this.stands) {
-            sPlayer.connection.send(new ClientboundRemoveEntitiesPacket(stand.getId()));
         }
     }
 }
