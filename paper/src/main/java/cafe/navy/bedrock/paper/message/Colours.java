@@ -1,4 +1,4 @@
-package cafe.navy.paper.message;
+package cafe.navy.bedrock.paper.message;
 
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;

@@ -1,4 +1,4 @@
-package cafe.navy.paper.entity;
+package cafe.navy.bedrock.paper.entity;
 
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;

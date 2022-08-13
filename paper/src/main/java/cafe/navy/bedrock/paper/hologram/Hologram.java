@@ -1,7 +1,7 @@
-package cafe.navy.paper.hologram;
+package cafe.navy.bedrock.paper.hologram;
 
-import cafe.navy.paper.entity.ClientEntity;
-import cafe.navy.paper.message.Message;
+import cafe.navy.bedrock.paper.entity.ClientEntity;
+import cafe.navy.bedrock.paper.message.Message;
 import io.papermc.paper.adventure.PaperAdventure;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;

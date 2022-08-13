@@ -1,4 +1,4 @@
-package cafe.navy.paper.message;
+package cafe.navy.bedrock.paper.message;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
