@@ -1,8 +1,12 @@
 package cafe.navy.paper.message;
 
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PlaceholderSet {
@@ -33,6 +37,14 @@ public class PlaceholderSet {
         }
 
         return input;
+    }
+
+    public @NonNull TagResolver asResolver() {
+        final List<TagResolver> resolvers = new ArrayList<>();
+        for (final var entry : this.placeholders.entrySet()) {
+            resolvers.add(TagResolver.resolver(entry.getKey(), Tag.preProcessParsed(entry.getValue())));
+        }
+        return TagResolver.resolver(resolvers);
     }
 
 }
