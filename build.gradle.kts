@@ -1,19 +1,26 @@
 plugins {
-    id("java")
+    java
+    `maven-publish`
+    id("io.papermc.paperweight.userdev") apply false
+    id("com.github.johnrengelman.shadow") apply false
+    id("org.checkerframework") apply false
 }
 
-group = "cafe.navy"
-version = "1.0-SNAPSHOT"
+group = "cafe.navy.bedrock"
+version = "1.0.0"
 
-repositories {
-    mavenCentral()
+subprojects {
+    apply(plugin = "java")
+    apply(plugin = "org.checkerframework")
+
+    repositories {
+        mavenCentral()
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://jitpack.io")
+        maven("https://papermc.io/repo/repository/maven-public/")
+        maven("https://repo.broccol.ai/releases")
+    }
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
-}
-
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
 }
