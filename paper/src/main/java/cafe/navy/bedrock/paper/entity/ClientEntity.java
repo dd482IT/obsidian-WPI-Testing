@@ -8,12 +8,27 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public interface ClientEntity {
 
+    /**
+     * Returns the intended view radius for this entity.
+     *
+     * @return the entity's view radius
+     */
     default double viewRadius() {
         return 20;
     }
 
+    /**
+     * Shows the entity to a player.
+     *
+     * @param player the player
+     */
     void show(final @NonNull Player player);
 
+    /**
+     * Hides the entity from a player.
+     *
+     * @param player the player
+     */
     void hide(final @NonNull Player player);
 
 }
