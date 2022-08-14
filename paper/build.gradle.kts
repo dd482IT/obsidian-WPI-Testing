@@ -13,5 +13,4 @@ dependencies {
     compileOnly(libs.corn.minecraft.paper) {
         exclude(group="io.papermc.paper", module="paper-api")
     }
-
 }
