@@ -29,11 +29,6 @@ public class PaperClientEntity implements ClientEntity {
     }
 
     @Override
-    public double renderDistance() {
-        return ClientEntity.super.renderDistance();
-    }
-
-    @Override
     public @NonNull Location location() {
         return this.entity.getLocation();
     }
