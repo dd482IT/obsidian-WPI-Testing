@@ -1,12 +1,23 @@
 package cafe.navy.bedrock.paper.entity;
 
-import org.bukkit.entity.Player;
+import cafe.navy.bedrock.paper.exception.ClientEntityException;
+import cafe.navy.bedrock.paper.target.EntityTarget;
+import org.bukkit.Location;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.UUID;
 
 /**
  * Represents a client-side entity that can be sent or removed from a player.
  */
 public interface ClientEntity {
+
+    /**
+     * Returns the {@link UUID} of this ClientEntity.
+     *
+     * @return the {@link UUID}
+     */
+    @NonNull UUID uuid();
 
     /**
      * Returns the intended view radius for this entity.
@@ -18,17 +29,28 @@ public interface ClientEntity {
     }
 
     /**
-     * Shows the entity to a player.
+     * Returns the location of the entity.
      *
-     * @param player the player
+     * @return the entity location
      */
-    void show(final @NonNull Player player);
+    @NonNull Location location();
 
-    /**
-     * Hides the entity from a player.
-     *
-     * @param player the player
-     */
-    void hide(final @NonNull Player player);
+    void add(final @NonNull EntityTarget target) throws ClientEntityException;
+
+    void remove(final @NonNull EntityTarget target) throws ClientEntityException;
+
+    void update(final @NonNull EntityTarget target) throws ClientEntityException;
+
+    default void activate() {
+
+    };
+
+    default void deactivate() {
+
+    };
+
+    default boolean active() {
+        return false;
+    };
 
 }

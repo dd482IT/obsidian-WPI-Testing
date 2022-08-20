@@ -1,7 +1,9 @@
 package cafe.navy.bedrock.paper.hologram;
 
 import cafe.navy.bedrock.paper.entity.ClientEntity;
+import cafe.navy.bedrock.paper.exception.ClientEntityException;
 import cafe.navy.bedrock.paper.message.Message;
+import cafe.navy.bedrock.paper.target.EntityTarget;
 import io.papermc.paper.adventure.PaperAdventure;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
@@ -10,6 +12,7 @@ import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.level.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
@@ -18,15 +21,20 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * {@code Hologram} is a {@link ClientEntity} that shows lines of text, like a "hologram".
  */
 public class Hologram implements ClientEntity {
 
+    private final @NonNull UUID uuid;
     private final @NonNull List<Message> lines;
     private final @NonNull List<ArmorStand> stands;
     private final double lineHeight = 0.5;
+    private final @NonNull Location rootLocation;
+
 
     /**
      * Constructs {@code Hologram}.
@@ -38,6 +46,8 @@ public class Hologram implements ClientEntity {
                     final @NonNull List<Message> lines) {
         this.lines = lines;
         this.stands = new ArrayList<>();
+        this.rootLocation = location;
+        this.uuid = UUID.randomUUID();
 
         final Level level = ((CraftWorld) location.getWorld()).getHandle().getLevel();
         for (int i = 0; i < this.lines.size(); i++) {
@@ -56,7 +66,27 @@ public class Hologram implements ClientEntity {
         }
     }
 
-    public void show(final @NonNull Player player) {
+    @Override
+    public @NonNull UUID uuid() {
+        return this.uuid;
+    }
+
+    @Override
+    public @NonNull Location location() {
+        return this.rootLocation;
+    }
+
+    @Override
+    public void add(final @NonNull EntityTarget target) throws ClientEntityException {
+        final UUID uuid = target.uuid();
+        final Player player = Bukkit.getPlayer(uuid);
+
+        try {
+            Objects.requireNonNull(player);
+        } catch (final Exception e) {
+            throw new ClientEntityException(e);
+        }
+
         final ServerPlayer sPlayer = ((CraftPlayer) player).getHandle();
         for (final ArmorStand stand : this.stands) {
             sPlayer.connection.send(new ClientboundAddEntityPacket(stand));
@@ -64,11 +94,26 @@ public class Hologram implements ClientEntity {
         }
     }
 
-    public void hide(final @NonNull Player player) {
+    @Override
+    public void remove(final @NonNull EntityTarget target) throws ClientEntityException {
+        final UUID uuid = target.uuid();
+        final Player player = Bukkit.getPlayer(uuid);
+
+        try {
+            Objects.requireNonNull(player);
+        } catch (final Exception e) {
+            throw new ClientEntityException(e);
+        }
+
         final ServerPlayer sPlayer = ((CraftPlayer) player).getHandle();
         for (final ArmorStand stand : this.stands) {
             sPlayer.connection.send(new ClientboundRemoveEntitiesPacket(stand.getId()));
         }
+    }
+
+    @Override
+    public void update(@NonNull EntityTarget target) throws ClientEntityException {
+
     }
 
     /**
