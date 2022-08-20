@@ -5,7 +5,6 @@ import cafe.navy.bedrock.paper.realm.Realm;
 import cafe.navy.bedrock.paper.realm.WorldRealm;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -90,8 +89,9 @@ public class Server {
 
     /**
      * {@link BukkitRunnable#runTaskTimer} alias
+     *
      * @param runnable the runnable
-     * @param time time delay
+     * @param time     time delay
      * @return the task
      */
     public @NonNull BukkitTask registerTimedTask(final @MonotonicNonNull Runnable runnable,
@@ -106,8 +106,9 @@ public class Server {
 
     /**
      * {@link BukkitRunnable#runTaskLater} alias
+     *
      * @param runnable the runnable
-     * @param time time delay
+     * @param time     time delay
      * @return the task
      */
     public @NonNull BukkitTask registerDelayedTask(final @MonotonicNonNull Runnable runnable,

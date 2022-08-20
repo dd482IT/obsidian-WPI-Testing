@@ -43,14 +43,20 @@ public interface ClientEntity {
 
     default void activate() {
 
-    };
+    }
+
+    ;
 
     default void deactivate() {
 
-    };
+    }
+
+    ;
 
     default boolean active() {
         return false;
-    };
+    }
+
+    ;
 
 }

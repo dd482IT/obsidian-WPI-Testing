@@ -40,7 +40,7 @@ public class Hologram implements ClientEntity {
      * Constructs {@code Hologram}.
      *
      * @param location the hologram's location
-     * @param lines the hologram's lines
+     * @param lines    the hologram's lines
      */
     public Hologram(final @NonNull Location location,
                     final @NonNull List<Message> lines) {
@@ -119,7 +119,7 @@ public class Hologram implements ClientEntity {
     /**
      * Moves the hologram for a player.
      *
-     * @param player the player
+     * @param player   the player
      * @param location the location
      */
     public void moveTo(final @NonNull Player player,
