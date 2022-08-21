@@ -2,6 +2,7 @@ package cafe.navy.bedrock.paper;
 
 import cafe.navy.bedrock.paper.command.CommandRegistry;
 import cafe.navy.bedrock.paper.command.impl.BedrockCommand;
+import cafe.navy.bedrock.paper.item.ItemManager;
 import cafe.navy.bedrock.paper.player.PlayerManager;
 import cafe.navy.bedrock.paper.realm.Realm;
 import cafe.navy.bedrock.paper.realm.WorldRealm;
@@ -35,6 +36,7 @@ public class Server implements Listener {
     private final @NonNull JavaPlugin plugin;
     private final @NonNull PlayerManager playerManager;
     private final @NonNull CommandRegistry commandRegistry;
+    private final @NonNull ItemManager itemManager;
     private final @NonNull Map<UUID, Realm> realms;
     private boolean enabled = false;
 
@@ -45,6 +47,7 @@ public class Server implements Listener {
      */
     public Server(final @NonNull JavaPlugin plugin) {
         this.plugin = plugin;
+        this.itemManager = new ItemManager();
         this.playerManager = new PlayerManager(this.plugin);
         try {
             this.commandRegistry = new CommandRegistry(this.plugin);
@@ -55,7 +58,7 @@ public class Server implements Listener {
     }
 
     /**
-     * Returns whether or not the server has been enabled.
+     * Returns whether the server has been enabled.
      *
      * @return true or false
      */
@@ -79,6 +82,15 @@ public class Server implements Listener {
      */
     public @NonNull CommandRegistry commands() {
         return this.commandRegistry;
+    }
+
+    /**
+     * Returns the {@link ItemManager}.
+     *
+     * @return the item manager
+     */
+    public @NonNull ItemManager items() {
+        return this.itemManager;
     }
 
     /**

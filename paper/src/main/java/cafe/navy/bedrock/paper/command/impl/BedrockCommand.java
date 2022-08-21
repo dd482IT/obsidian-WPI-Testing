@@ -5,7 +5,6 @@ import cafe.navy.bedrock.paper.command.BaseCommand;
 import cafe.navy.bedrock.paper.message.Message;
 import cafe.navy.bedrock.paper.message.Messages;
 import cafe.navy.bedrock.paper.player.PlayerTarget;
-import cafe.navy.bedrock.paper.target.Target;
 import cloud.commandframework.paper.PaperCommandManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,7 +20,7 @@ public class BedrockCommand implements BaseCommand {
 
     @Override
     public @NonNull String name() {
-        return "base";
+        return "bedrock";
     }
 
     @Override
@@ -68,5 +67,7 @@ public class BedrockCommand implements BaseCommand {
         manager.command(builder);
         manager.command(viewing);
         manager.command(players);
+
+        this.registerSubCommand(new GiveSubCommand(this.server.items()), manager, builder);
     }
 }

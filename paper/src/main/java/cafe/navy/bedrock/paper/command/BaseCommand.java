@@ -92,6 +92,12 @@ public interface BaseCommand {
         this.registerSubCommands(manager, builder);
     }
 
+    default void registerSubCommand(final @NonNull SubCommand command,
+                                    final @NonNull PaperCommandManager<CommandSender> manager,
+                                    final Command.@NonNull Builder<CommandSender> builder) {
+        command.registerCommand(manager, builder.literal(command.name()));
+    }
+
     private void registerSubCommands(final @NonNull PaperCommandManager<CommandSender> manager,
                                      final Command.@NonNull Builder<CommandSender> builder) {
         final SubCommand[] commands = this.subCommands();
