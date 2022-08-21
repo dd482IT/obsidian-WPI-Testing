@@ -45,18 +45,12 @@ public interface ClientEntity {
 
     }
 
-    ;
-
     default void deactivate() {
 
     }
 
-    ;
-
     default boolean active() {
         return false;
     }
-
-    ;
 
 }

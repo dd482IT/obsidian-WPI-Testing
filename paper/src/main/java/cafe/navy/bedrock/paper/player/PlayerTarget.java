@@ -1,6 +1,7 @@
 package cafe.navy.bedrock.paper.player;
 
 import cafe.navy.bedrock.paper.entity.ClientEntity;
+import cafe.navy.bedrock.paper.exception.ClientEntityException;
 import cafe.navy.bedrock.paper.message.Message;
 import cafe.navy.bedrock.paper.realm.Realm;
 import cafe.navy.bedrock.paper.target.EntityTarget;
@@ -47,17 +48,31 @@ public class PlayerTarget implements EntityTarget, MessageTarget {
 
     @Override
     public void add(final @NonNull ClientEntity entity) {
+        try {
+            entity.add(this);
+        } catch (ClientEntityException e) {
+            throw new RuntimeException(e);
+        }
         this.entities.put(entity.uuid(), entity);
     }
 
     @Override
     public void remove(final @NonNull ClientEntity entity) {
+        try {
+            entity.remove(this);
+        } catch (ClientEntityException e) {
+            throw new RuntimeException(e);
+        }
         this.entities.remove(entity.uuid());
     }
 
     @Override
     public boolean viewing(final @NonNull ClientEntity entity) {
         return this.entities.containsKey(entity.uuid());
+    }
+
+    public @NonNull List<ClientEntity> viewing() {
+        return List.copyOf(this.entities.values());
     }
 
     @Override
