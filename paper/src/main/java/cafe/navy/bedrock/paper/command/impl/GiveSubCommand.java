@@ -60,6 +60,7 @@ public class GiveSubCommand implements SubCommand {
                 .handler(this::handleGive);
 
         manager.command(list);
+        manager.command(give);
     }
 
     private void handleList(final @NonNull CommandContext<CommandSender> ctx) {
