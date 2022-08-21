@@ -19,13 +19,17 @@ public class WorldRealm extends Realm implements Listener {
 
     public WorldRealm(final @NonNull Server server,
                       final @NonNull World world) {
-        super(world.getUID());
+        super(world.getUID(), world.getName());
         this.server = server;
         this.world = world;
     }
 
     @Override
     public void enable() {
+        for (final Player player : this.world.getPlayers()) {
+            this.add(this.server.players().getPlayer(player.getUniqueId()).get());
+        }
+
         this.renderDistanceTask = this.server.registerTimedTask(() -> {
             for (final ClientEntity entity : entityList()) {
                 for (final Player player : entity.location().getNearbyPlayers(entity.viewRadius())) {
@@ -35,9 +39,9 @@ public class WorldRealm extends Realm implements Listener {
                         final double viewRadius = entity.viewRadius() * entity.viewRadius();
                         final double dist = Math.abs(targetLoc.distanceSquared(entityLoc));
                         if (dist >= viewRadius && target.viewing(entity)) {
-                            target.add(entity);
-                        } else if (dist <= viewRadius && !target.viewing(entity)) {
                             target.remove(entity);
+                        } else if (dist <= viewRadius && !target.viewing(entity)) {
+                            target.add(entity);
                         }
                     });
                 }
@@ -51,25 +55,5 @@ public class WorldRealm extends Realm implements Listener {
             this.renderDistanceTask.cancel();
         }
         this.renderDistanceTask = null;
-    }
-
-    @Override
-    public void add(@NonNull PlayerTarget target) {
-
-    }
-
-    @Override
-    public void remove(@NonNull PlayerTarget target) {
-
-    }
-
-    @Override
-    public void add(@NonNull ClientEntity entity) {
-
-    }
-
-    @Override
-    public void remove(@NonNull ClientEntity entity) {
-
     }
 }

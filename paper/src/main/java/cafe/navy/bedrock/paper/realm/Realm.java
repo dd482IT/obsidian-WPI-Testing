@@ -25,11 +25,18 @@ public abstract class Realm {
     private final @NonNull Map<UUID, PlayerTarget> players;
     private final @NonNull Map<UUID, ClientEntity> entities;
     private final @NonNull UUID uuid;
+    private final @NonNull String name;
 
-    public Realm(final @NonNull UUID uuid) {
+    public Realm(final @NonNull UUID uuid,
+                 final @NonNull String name) {
         this.uuid = uuid;
+        this.name = name;
         this.players = new HashMap<>();
         this.entities = new HashMap<>();
+    }
+
+    public @NonNull String name() {
+        return this.name;
     }
 
     public @NonNull UUID uuid() {
@@ -48,12 +55,20 @@ public abstract class Realm {
 
     public abstract void disable();
 
-    public abstract void add(final @NonNull PlayerTarget target);
+    public void add(final @NonNull PlayerTarget target) {
+        this.players.put(target.uuid(), target);
+    }
 
-    public abstract void remove(final @NonNull PlayerTarget target);
+    public void remove(final @NonNull PlayerTarget target) {
+        this.players.remove(target.uuid());
+    }
 
-    public abstract void add(final @NonNull ClientEntity entity);
+    public void add(final @NonNull ClientEntity entity) {
+        this.entities.put(entity.uuid(), entity);
+    }
 
-    public abstract void remove(final @NonNull ClientEntity entity);
+    public void remove(final @NonNull ClientEntity entity) {
+        this.entities.remove(entity.uuid());
+    }
 
 }
