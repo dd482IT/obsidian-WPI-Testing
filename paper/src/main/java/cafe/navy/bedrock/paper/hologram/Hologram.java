@@ -116,6 +116,17 @@ public class Hologram implements ClientEntity {
 
     }
 
+    @Override
+    public boolean checkId(int entityId) {
+        for (final ArmorStand stand : this.stands) {
+            if (stand.getId() == entityId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Moves the hologram for a player.
      *

@@ -53,4 +53,6 @@ public interface ClientEntity {
         return false;
     }
 
+    boolean checkId(final int entityId);
+
 }

@@ -5,34 +5,36 @@ import cafe.navy.bedrock.paper.target.EntityTarget;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftSlime;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
 
-public class PaperClientEntity implements ClientEntity {
+public class NMSClientEntity implements ClientEntity {
 
     private final @NonNull Entity entity;
 
-    public PaperClientEntity(final @NonNull Entity entity) {
+    public NMSClientEntity(final @NonNull Entity entity) {
         this.entity = entity;
     }
 
     @Override
     public @NonNull UUID uuid() {
-        return this.entity.getUniqueId();
+        return this.entity.getUUID();
     }
 
     @Override
     public @NonNull Location location() {
-        return this.entity.getLocation();
+        return new Location(
+                Bukkit.getWorld(this.entity.getOriginWorld()),
+                this.entity.getX(),
+                this.entity.getY(),
+                this.entity.getZ()
+        );
     }
 
     @Override
@@ -44,9 +46,8 @@ public class PaperClientEntity implements ClientEntity {
         }
 
         final ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
-        final net.minecraft.world.entity.Entity serverEntity = ((CraftEntity) this.entity).getHandle();
-        serverPlayer.connection.send(serverEntity.getAddEntityPacket());
-        serverPlayer.connection.send(new ClientboundSetEntityDataPacket(serverEntity.getId(), serverEntity.getEntityData(), true));
+        serverPlayer.connection.send(this.entity.getAddEntityPacket());
+        serverPlayer.connection.send(new ClientboundSetEntityDataPacket(this.entity.getId(), this.entity.getEntityData(), true));
     }
 
     @Override
@@ -59,7 +60,7 @@ public class PaperClientEntity implements ClientEntity {
         }
 
         final ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
-        serverPlayer.connection.send(new ClientboundRemoveEntitiesPacket(this.entity.getEntityId()));
+        serverPlayer.connection.send(new ClientboundRemoveEntitiesPacket(this.entity.getId()));
     }
 
     @Override
@@ -84,6 +85,6 @@ public class PaperClientEntity implements ClientEntity {
 
     @Override
     public boolean checkId(int entityId) {
-        return this.entity.getEntityId() == entityId;
+        return entityId == this.entity.getId();
     }
 }
