@@ -1,4 +1,4 @@
-package cafe.navy.bedrock.paper.command.impl;
+package cafe.navy.bedrock.paper.command.item;
 
 import cafe.navy.bedrock.paper.command.SubCommand;
 import cafe.navy.bedrock.paper.item.Item;

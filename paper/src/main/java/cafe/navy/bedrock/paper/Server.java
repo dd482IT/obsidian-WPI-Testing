@@ -1,7 +1,7 @@
 package cafe.navy.bedrock.paper;
 
 import cafe.navy.bedrock.paper.command.CommandRegistry;
-import cafe.navy.bedrock.paper.command.impl.BedrockCommand;
+import cafe.navy.bedrock.paper.command.bedrock.BedrockCommand;
 import cafe.navy.bedrock.paper.item.ItemManager;
 import cafe.navy.bedrock.paper.player.PlayerManager;
 import cafe.navy.bedrock.paper.realm.Realm;
@@ -47,8 +47,8 @@ public class Server implements Listener {
      */
     public Server(final @NonNull JavaPlugin plugin) {
         this.plugin = plugin;
-        this.itemManager = new ItemManager();
         this.playerManager = new PlayerManager(this.plugin);
+        this.itemManager = new ItemManager(this.plugin, this.playerManager);
         try {
             this.commandRegistry = new CommandRegistry(this.plugin);
         } catch (Exception e) {
@@ -103,6 +103,15 @@ public class Server implements Listener {
     }
 
     /**
+     * Returns the plugin who owns this server.
+     *
+     * @return the plugin
+     */
+    public @NonNull JavaPlugin plugin() {
+        return this.plugin;
+    }
+
+    /**
      * Enables {@code Server}.
      */
     public void enable() {
@@ -117,6 +126,7 @@ public class Server implements Listener {
         }
 
 
+        this.itemManager.enable();
         this.commandRegistry.addCommand(new BedrockCommand(this));
         this.enabled = true;
     }
@@ -127,6 +137,7 @@ public class Server implements Listener {
     public void disable() {
         HandlerList.unregisterAll(this);
         this.realms.clear();
+        this.itemManager.disable();
         this.enabled = false;
     }
 

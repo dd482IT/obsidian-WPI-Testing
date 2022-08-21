@@ -1,7 +1,8 @@
-package cafe.navy.bedrock.paper.command.impl;
+package cafe.navy.bedrock.paper.command.bedrock;
 
 import cafe.navy.bedrock.paper.Server;
 import cafe.navy.bedrock.paper.command.BaseCommand;
+import cafe.navy.bedrock.paper.command.item.GiveSubCommand;
 import cafe.navy.bedrock.paper.message.Message;
 import cafe.navy.bedrock.paper.message.Messages;
 import cafe.navy.bedrock.paper.player.PlayerTarget;

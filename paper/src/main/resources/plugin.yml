@@ -1,3 +1,4 @@
 name: bedrock
 version: 1.0.0
 main: cafe.navy.bedrock.paper.BedrockPlugin
+api-version: 1.19
