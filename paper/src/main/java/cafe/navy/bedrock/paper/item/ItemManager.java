@@ -125,10 +125,8 @@ public class ItemManager implements Listener {
 
     @EventHandler
     private void handleClientEntityInteract(final @NonNull ClientEntityInteractEvent event) {
-        Bukkit.broadcastMessage("hcei");
         final var itemOpt = this.getItemFromItemStack(event.player().getInventory().getItemInMainHand());
         if (itemOpt.isEmpty()) {
-            Bukkit.broadcastMessage("no item --null");
             return;
         }
 

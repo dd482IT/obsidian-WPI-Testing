@@ -48,21 +48,11 @@ public class PlayerTarget implements EntityTarget, MessageTarget {
 
     @Override
     public void add(final @NonNull ClientEntity entity) {
-        try {
-            entity.add(this);
-        } catch (ClientEntityException e) {
-            throw new RuntimeException(e);
-        }
         this.entities.put(entity.uuid(), entity);
     }
 
     @Override
     public void remove(final @NonNull ClientEntity entity) {
-        try {
-            entity.remove(this);
-        } catch (ClientEntityException e) {
-            throw new RuntimeException(e);
-        }
         this.entities.remove(entity.uuid());
     }
 
@@ -82,7 +72,7 @@ public class PlayerTarget implements EntityTarget, MessageTarget {
 
     @Override
     public void sendMessage(final @NonNull Message message) {
-
+        this.player.sendMessage(message.asComponent());
     }
 
     public void handleRealmChange(final @NonNull Realm prev,

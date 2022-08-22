@@ -1,90 +1,84 @@
 package cafe.navy.bedrock.paper.entity;
 
 import cafe.navy.bedrock.paper.exception.ClientEntityException;
+import cafe.navy.bedrock.paper.player.PlayerUtil;
 import cafe.navy.bedrock.paper.target.EntityTarget;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.world.entity.Entity;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
-import org.bukkit.entity.Player;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.UUID;
-
-public class NMSClientEntity implements ClientEntity {
+public class NMSClientEntity extends ClientEntity {
 
     private final @NonNull Entity entity;
 
     public NMSClientEntity(final @NonNull Entity entity) {
+        super(entity.getUUID(), entity.getBukkitEntity().getLocation());
         this.entity = entity;
     }
 
-    @Override
-    public @NonNull UUID uuid() {
-        return this.entity.getUUID();
+    public NMSClientEntity(final org.bukkit.entity.@NonNull Entity entity) {
+        super(entity.getUniqueId(), entity.getLocation());
+        this.entity = ((CraftEntity) entity).getHandle();
+    }
+
+    public @NonNull Entity entity() {
+        return this.entity;
     }
 
     @Override
-    public @NonNull Location location() {
-        return new Location(
-                Bukkit.getWorld(this.entity.getOriginWorld()),
-                this.entity.getX(),
-                this.entity.getY(),
-                this.entity.getZ()
-        );
-    }
-
-    @Override
-    public void add(final @NonNull EntityTarget target) throws ClientEntityException {
-        final UUID uuid = target.uuid();
-        final Player player = Bukkit.getPlayer(uuid);
-        if (player == null) {
-            throw new ClientEntityException("");
+    protected void show(final @NonNull EntityTarget target) {
+        final var playerOpt = PlayerUtil.getServerPlayer(target.uuid());
+        if (playerOpt.isEmpty()) {
+            throw new RuntimeException();
         }
 
-        final ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
-        serverPlayer.connection.send(this.entity.getAddEntityPacket());
-        serverPlayer.connection.send(new ClientboundSetEntityDataPacket(this.entity.getId(), this.entity.getEntityData(), true));
+        final var player = playerOpt.get();
+        final var addPacket = this.entity.getAddEntityPacket();
+        final var dataPacket = new ClientboundSetEntityDataPacket(this.entity.getId(), this.entity.getEntityData(), true);
+
+        player.connection.send(addPacket);
+        player.connection.send(dataPacket);
     }
 
     @Override
-    public void remove(final @NonNull EntityTarget target) throws ClientEntityException {
-
-        final UUID uuid = target.uuid();
-        final Player player = Bukkit.getPlayer(uuid);
-        if (player == null) {
-            throw new ClientEntityException("");
+    protected void hide(final @NonNull EntityTarget target) {
+        final var playerOpt = PlayerUtil.getServerPlayer(target.uuid());
+        if (playerOpt.isEmpty()) {
+            throw new RuntimeException();
         }
 
-        final ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
-        serverPlayer.connection.send(new ClientboundRemoveEntitiesPacket(this.entity.getId()));
+        final var player = playerOpt.get();
+        final var removePacket = new ClientboundRemoveEntitiesPacket(this.entity.getId());
+        player.connection.send(removePacket);
     }
 
     @Override
-    public void update(@NonNull EntityTarget target) throws ClientEntityException {
+    protected void update(@NonNull EntityTarget target) throws ClientEntityException {
+        final var playerOpt = PlayerUtil.getServerPlayer(target.uuid());
+        if (playerOpt.isEmpty()) {
+            throw new RuntimeException();
+        }
+
+        final var player = playerOpt.get();
+        final var dataPacket = new ClientboundSetEntityDataPacket(this.entity.getId(), this.entity.getEntityData(), true);
+        final var tpPacket = new ClientboundTeleportEntityPacket(this.entity);
+        player.connection.send(dataPacket);
+        player.connection.send(tpPacket);
 
     }
 
     @Override
-    public void activate() {
-        ClientEntity.super.activate();
+    protected boolean isEntityIdPresent(final int id) {
+        return this.entity.getId() == id;
     }
 
     @Override
-    public void deactivate() {
-        ClientEntity.super.deactivate();
-    }
-
-    @Override
-    public boolean active() {
-        return ClientEntity.super.active();
-    }
-
-    @Override
-    public boolean checkId(int entityId) {
-        return entityId == this.entity.getId();
+    public void teleport(@NonNull Location location) {
+        this.entity.teleportTo(location.getX(), location.getY(), location.getZ());
+        this.update();
     }
 }

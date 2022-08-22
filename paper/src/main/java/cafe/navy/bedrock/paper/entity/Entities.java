@@ -16,6 +16,8 @@ public interface Entities {
                 EntityType.SLIME, ((CraftWorld) location.getWorld()).getHandle()
         );
         entity.setSize(height, true);
+        entity.setInvisible(true);
+
         entity.teleportTo(location.getX(), location.getY(), location.getZ());
         return new NMSClientEntity(entity);
     }

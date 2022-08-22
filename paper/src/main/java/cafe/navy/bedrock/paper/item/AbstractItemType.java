@@ -40,7 +40,6 @@ public class AbstractItemType implements ItemType {
     }
     @Override
     public void handleEntityInteract(final @NonNull EntityInteractContext context) {
-        Bukkit.broadcastMessage("handling ait rwuhfiu: "+this.entityInteractHandler);
         if (this.entityInteractHandler != null) {
             this.entityInteractHandler.accept(context);
         }

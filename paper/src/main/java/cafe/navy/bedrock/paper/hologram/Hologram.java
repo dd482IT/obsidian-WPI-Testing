@@ -27,13 +27,12 @@ import java.util.UUID;
 /**
  * {@code Hologram} is a {@link ClientEntity} that shows lines of text, like a "hologram".
  */
-public class Hologram implements ClientEntity {
+public class Hologram extends ClientEntity {
 
     private final @NonNull UUID uuid;
     private final @NonNull List<Message> lines;
     private final @NonNull List<ArmorStand> stands;
     private final double lineHeight = 0.5;
-    private final @NonNull Location rootLocation;
 
 
     /**
@@ -44,9 +43,9 @@ public class Hologram implements ClientEntity {
      */
     public Hologram(final @NonNull Location location,
                     final @NonNull List<Message> lines) {
+        super(UUID.randomUUID(), location);
         this.lines = lines;
         this.stands = new ArrayList<>();
-        this.rootLocation = location;
         this.uuid = UUID.randomUUID();
 
         final Level level = ((CraftWorld) location.getWorld()).getHandle().getLevel();
@@ -67,17 +66,7 @@ public class Hologram implements ClientEntity {
     }
 
     @Override
-    public @NonNull UUID uuid() {
-        return this.uuid;
-    }
-
-    @Override
-    public @NonNull Location location() {
-        return this.rootLocation;
-    }
-
-    @Override
-    public void add(final @NonNull EntityTarget target) throws ClientEntityException {
+    public void show(final @NonNull EntityTarget target) throws ClientEntityException {
         final UUID uuid = target.uuid();
         final Player player = Bukkit.getPlayer(uuid);
 
@@ -95,7 +84,7 @@ public class Hologram implements ClientEntity {
     }
 
     @Override
-    public void remove(final @NonNull EntityTarget target) throws ClientEntityException {
+    public void hide(final @NonNull EntityTarget target) throws ClientEntityException {
         final UUID uuid = target.uuid();
         final Player player = Bukkit.getPlayer(uuid);
 
@@ -112,12 +101,23 @@ public class Hologram implements ClientEntity {
     }
 
     @Override
-    public void update(@NonNull EntityTarget target) throws ClientEntityException {
+    public void update(final @NonNull EntityTarget target) {
 
     }
 
     @Override
-    public boolean checkId(int entityId) {
+    protected boolean isEntityIdPresent(int id) {
+        for (final var stand : this.stands) {
+            if (stand.getId() == id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean checkEntityId(int entityId) {
         for (final ArmorStand stand : this.stands) {
             if (stand.getId() == entityId) {
                 return true;
@@ -125,6 +125,19 @@ public class Hologram implements ClientEntity {
         }
 
         return false;
+    }
+
+    @Override
+    public void teleport(final @NonNull Location location) {
+        for (int i = 0; i < this.lines.size(); i++) {
+            this.stands.get(i).teleportTo(
+                    location.getX(),
+                    location.getY() + (i * this.lineHeight),
+                    location.getZ()
+            );
+        }
+        this.update();
+        this.setLocation(location);
     }
 
     /**

@@ -2,6 +2,7 @@ package cafe.navy.bedrock.paper.entity;
 
 import cafe.navy.bedrock.paper.Server;
 import cafe.navy.bedrock.paper.event.ClientEntityInteractEvent;
+import cafe.navy.bedrock.paper.exception.ClientEntityException;
 import cafe.navy.bedrock.paper.player.PlayerTarget;
 import cafe.navy.bedrock.paper.target.EntityTarget;
 import com.comphenix.protocol.PacketType;
@@ -51,13 +52,12 @@ public class ClientEntityManager {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this.server.plugin(), PacketType.Play.Client.ENTITY_ACTION, PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
-                Bukkit.broadcastMessage("Packet: " + event.getPacketType());
                 final Player player = event.getPlayer();
                 final PlayerTarget target = server.players().getPlayer(player.getUniqueId()).get();
                 if (event.getPacketType() == PacketType.Play.Client.USE_ENTITY) {
                     final int id = event.getPacket().getIntegers().read(0);
                     for (final ClientEntity entity : entities.values()) {
-                        if (entity.checkId(id)) {
+                        if (entity.checkEntityId(id)) {
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
@@ -80,9 +80,17 @@ public class ClientEntityManager {
                         final double viewRadius = entity.viewRadius() * entity.viewRadius();
                         final double dist = Math.abs(targetLoc.distanceSquared(entityLoc));
                         if (dist >= viewRadius && target.viewing(entity)) {
-                            target.remove(entity);
+                            try {
+                                entity.remove(target);
+                            } catch (ClientEntityException e) {
+                                throw new RuntimeException(e);
+                            }
                         } else if (dist <= viewRadius && !target.viewing(entity)) {
-                            target.add(entity);
+                            try {
+                                entity.add(target);
+                            } catch (ClientEntityException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     });
                 }

@@ -1,7 +1,9 @@
 package cafe.navy.bedrock.paper;
 
+import cafe.navy.bedrock.paper.command.ClientEntityCommand;
 import cafe.navy.bedrock.paper.command.CommandRegistry;
 import cafe.navy.bedrock.paper.command.bedrock.BedrockCommand;
+import cafe.navy.bedrock.paper.command.item.ItemCommand;
 import cafe.navy.bedrock.paper.item.ItemManager;
 import cafe.navy.bedrock.paper.player.PlayerManager;
 import cafe.navy.bedrock.paper.realm.Realm;
@@ -21,10 +23,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * {@code Server} maintains instances of all the important classes for a server utilizing bedrock's utilities.
@@ -102,6 +101,10 @@ public class Server implements Listener {
         return List.copyOf(this.realms.values());
     }
 
+    public @NonNull Optional<@NonNull Realm> getRealm(final @NonNull UUID uuid) {
+        return Optional.ofNullable(this.realms.get(uuid));
+    }
+
     /**
      * Returns the plugin who owns this server.
      *
@@ -128,6 +131,8 @@ public class Server implements Listener {
 
         this.itemManager.enable();
         this.commandRegistry.addCommand(new BedrockCommand(this));
+        this.commandRegistry.addCommand(new ItemCommand(this));
+        this.commandRegistry.addCommand(new ClientEntityCommand(this));
         this.enabled = true;
     }
 
