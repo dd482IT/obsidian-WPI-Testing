@@ -15,4 +15,12 @@ public interface Messages {
             .newline()
             .text("Your body will thank you :^)");
 
+    static @NonNull Message createError() {
+        return Message
+                .create()
+                .text("[")
+                .error("Error")
+                .text("] ");
+    }
+
 }

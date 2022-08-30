@@ -1,7 +1,7 @@
 package cafe.navy.bedrock.paper.player;
 
+import cafe.navy.bedrock.paper.data.DataHolder;
 import cafe.navy.bedrock.paper.entity.ClientEntity;
-import cafe.navy.bedrock.paper.exception.ClientEntityException;
 import cafe.navy.bedrock.paper.message.Message;
 import cafe.navy.bedrock.paper.realm.Realm;
 import cafe.navy.bedrock.paper.target.EntityTarget;
@@ -27,13 +27,20 @@ public class PlayerTarget implements EntityTarget, MessageTarget {
     private final @NonNull JavaPlugin plugin;
     private final @NonNull Player player;
     private final @NonNull Map<UUID, ClientEntity> entities;
+    private final @NonNull DataHolder data;
     private @MonotonicNonNull BukkitTask renderDistanceTask;
 
     public PlayerTarget(final @NonNull JavaPlugin plugin,
+                        final @NonNull DataHolder data,
                         final @NonNull Player player) {
         this.player = player;
+        this.data = data;
         this.plugin = plugin;
         this.entities = new HashMap<>();
+    }
+
+    public @NonNull DataHolder data() {
+        return this.data;
     }
 
     @Override

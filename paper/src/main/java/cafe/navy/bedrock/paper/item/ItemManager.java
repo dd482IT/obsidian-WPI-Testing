@@ -2,10 +2,9 @@ package cafe.navy.bedrock.paper.item;
 
 import broccolai.corn.paper.item.PaperItemBuilder;
 import cafe.navy.bedrock.paper.event.ClientEntityInteractEvent;
-import cafe.navy.bedrock.paper.item.context.EntityInteractContext;
-import cafe.navy.bedrock.paper.item.context.ItemPlaceContext;
+import cafe.navy.bedrock.paper.item.context.ItemInteractEvent;
 import cafe.navy.bedrock.paper.player.PlayerManager;
-import org.bukkit.Bukkit;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -98,41 +97,64 @@ public class ItemManager implements Listener {
     }
 
     @EventHandler
-    private void handleItemInteract(final @NonNull PlayerInteractEvent event) {
-        final var itemOpt = this.getItemFromItemStack(event.getItem());
-        if (itemOpt.isEmpty()) {
-            return;
-        }
-
-        final var item = itemOpt.get();
-        event.setCancelled(true);
-
-        item.type().handleItemPlace(new ItemPlaceContext(event));
-    }
-
-    @EventHandler
     private void handleItemInteractEntity(final @NonNull PlayerInteractEntityEvent event) {
-        final var itemOpt = this.getItemFromItemStack(event.getPlayer().getInventory().getItemInMainHand());
+        final Optional<Item> itemOpt = this.getItemFromItemStack(event.getPlayer().getInventory().getItemInMainHand());
         if (itemOpt.isEmpty()) {
             return;
         }
-
-        final var item = itemOpt.get();
         event.setCancelled(true);
 
-        item.type().handleEntityInteract(new EntityInteractContext(null, event.getRightClicked(), item, this.playerManager.getPlayer(event.getPlayer().getUniqueId()).get()));
+        final Item item = itemOpt.get();
+        final ItemInteractEvent itemEvent = new ItemInteractEvent(
+                item,
+                event.getPlayer(),
+                ItemInteractEvent.InteractType.INTERACT,
+                null,
+                event.getRightClicked()
+        );
+        item.type().handleEvent(itemEvent);
     }
 
     @EventHandler
     private void handleClientEntityInteract(final @NonNull ClientEntityInteractEvent event) {
-        final var itemOpt = this.getItemFromItemStack(event.player().getInventory().getItemInMainHand());
+        final Optional<Item> itemOpt = this.getItemFromItemStack(event.player().getInventory().getItemInMainHand());
         if (itemOpt.isEmpty()) {
             return;
         }
 
-        final var item = itemOpt.get();
+        final Item item = itemOpt.get();
+        final EnumWrappers.EntityUseAction action = event.action();
 
-        item.type().handleEntityInteract(new EntityInteractContext(event.entity(), null, item, event.target()));
+
+        final ItemInteractEvent itemEvent = new ItemInteractEvent(
+                item,
+                event.player(),
+                action == EnumWrappers.EntityUseAction.ATTACK ? ItemInteractEvent.InteractType.ATTACK : ItemInteractEvent.InteractType.INTERACT,
+                event.entity(),
+                null
+        );
+
+        item.type().handleEvent(itemEvent);
+    }
+
+    @EventHandler
+    private void handleItemInteract(final @NonNull PlayerInteractEvent event) {
+        final Optional<Item> itemOpt = this.getItemFromItemStack(event.getPlayer().getInventory().getItemInMainHand());
+        if (itemOpt.isEmpty()) {
+            return;
+        }
+
+        final Item item = itemOpt.get();
+
+        final ItemInteractEvent itemEvent = new ItemInteractEvent(
+                item,
+                event.getPlayer(),
+                ItemInteractEvent.InteractType.INTERACT,
+                null,
+                null
+        );
+
+        item.type().handleEvent(itemEvent);
     }
 
 }

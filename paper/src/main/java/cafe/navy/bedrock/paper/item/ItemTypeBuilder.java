@@ -1,13 +1,14 @@
 package cafe.navy.bedrock.paper.item;
 
-import cafe.navy.bedrock.paper.item.context.EntityInteractContext;
-import cafe.navy.bedrock.paper.item.context.HotbarEquipContext;
-import cafe.navy.bedrock.paper.item.context.ItemPlaceContext;
-import net.minecraft.world.item.context.BlockPlaceContext;
+import cafe.navy.bedrock.paper.item.context.*;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class ItemTypeBuilder {
@@ -18,15 +19,14 @@ public class ItemTypeBuilder {
     }
 
     private final @NonNull String id;
-    private @Nullable Consumer<HotbarEquipContext> hotbarEquipHandler;
-    private @Nullable Consumer<ItemPlaceContext> blockPlaceHandler;
-    private @Nullable Consumer<EntityInteractContext> entityInteractHandler;
+    private final @NonNull Map<Class<? extends ItemEvent>, List<Consumer<? extends ItemEvent>>> handlers;
     private @NonNull ItemStack baseItem;
 
     private ItemTypeBuilder(final @NonNull String id,
                             final @NonNull ItemStack baseItem) {
         this.id = id;
         this.baseItem = baseItem;
+        this.handlers = new HashMap<>();
     }
 
     public @NonNull ItemTypeBuilder item(final @NonNull ItemStack baseItem) {
@@ -34,23 +34,22 @@ public class ItemTypeBuilder {
         return this;
     }
 
-    public @NonNull ItemTypeBuilder onPlace(final @Nullable Consumer<ItemPlaceContext> handler) {
-        this.blockPlaceHandler = handler;
+    public <T extends ItemEvent> @NonNull ItemTypeBuilder on(final @NonNull Class<T> eventType,
+                                       final @NonNull Consumer<T> handler) {
+        if (!this.handlers.containsKey(eventType)) {
+            this.handlers.put(eventType, new ArrayList<>());
+        }
+        this.handlers.get(eventType).add(handler);
         return this;
     }
 
-    public @NonNull ItemTypeBuilder onEntityInteract(final @Nullable Consumer<EntityInteractContext> handler) {
-        this.entityInteractHandler = handler;
-        return this;
-    }
-
-    public @NonNull ItemTypeBuilder onHotbarEquip(final @Nullable Consumer<HotbarEquipContext> handler) {
-        this.hotbarEquipHandler = handler;
-        return this;
-    }
 
     public @NonNull ItemType build() {
-        return new AbstractItemType(this.id, this.baseItem, this.blockPlaceHandler, this.hotbarEquipHandler, this.entityInteractHandler);
+        return new AbstractItemType(
+                this.id,
+                this.baseItem,
+                this.handlers
+        );
     }
 
 

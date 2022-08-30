@@ -3,11 +3,14 @@ package cafe.navy.bedrock.paper.message;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,13 +92,13 @@ public class Message implements ComponentLike {
      *
      * @param text       the text content to append
      * @param color      the text color
-     * @param decoration the text decoration
+     * @param decorations the text decorations
      * @return this
      */
     public @NonNull Message text(final @NonNull String text,
                                  final @NonNull TextColor color,
-                                 final @NonNull TextDecoration decoration) {
-        return this.text(Component.text(text, color, decoration));
+                                 final @NonNull TextDecoration... decorations) {
+        return this.text(Component.text(text, color, decorations));
     }
 
 
@@ -139,8 +142,9 @@ public class Message implements ComponentLike {
      * @param text the text content to append
      * @return this
      */
-    public @NonNull Message main(final @NonNull String text) {
-        return this.text(text, Colours.Tones.LIGHT_GRAY);
+    public @NonNull Message main(final @NonNull String text,
+                                 final @NonNull TextDecoration... decorations) {
+        return this.text(text, Colours.Tones.LIGHTER_GRAY, decorations);
     }
 
 
@@ -151,7 +155,50 @@ public class Message implements ComponentLike {
      * @return this
      */
     public @NonNull Message link(final @NonNull String text) {
-        return this.text(text, Colours.Light.BLUE, TextDecoration.UNDERLINED);
+        return this.link(text, null);
+    }
+
+    /**
+     * Appends text with the link style.
+     *
+     * @param text the text content to append
+     * @return this
+     */
+    public @NonNull Message copy(final @NonNull String text) {
+        return this.copy(text, null);
+    }
+
+    /**
+     * Appends text with the link style.
+     *
+     * @param text the text content to append
+     * @return this
+     */
+    public @NonNull Message copy(final @NonNull String text,
+                                 final @Nullable String copy) {
+        Component component = Component.text(text, Colours.Light.PURPLE, TextDecoration.UNDERLINED);
+        if (copy != null) {
+            component = component.clickEvent(ClickEvent.copyToClipboard(copy));
+            component = component.hoverEvent(HoverEvent.showText(Message.create("Click to copy ").copy(copy).main(".")));
+        }
+        return this.text(component);
+    }
+
+    /**
+     * Appends text with the link style.
+     *
+     * @param text the text content to append
+     * @return this
+     */
+    public @NonNull Message link(final @NonNull String text,
+                                 final @Nullable String url) {
+        Component component = Component.text(text, Colours.Light.BLUE, TextDecoration.UNDERLINED);
+        if (url != null) {
+            component = component.hoverEvent(HoverEvent.showText(Message.create("Click to open ").link(url).main(".")));
+            component = component.clickEvent(ClickEvent.openUrl(url));
+        }
+
+        return this.text(component);
     }
 
     /**

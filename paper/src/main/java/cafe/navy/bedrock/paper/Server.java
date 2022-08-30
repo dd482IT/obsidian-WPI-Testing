@@ -4,6 +4,7 @@ import cafe.navy.bedrock.paper.command.ClientEntityCommand;
 import cafe.navy.bedrock.paper.command.CommandRegistry;
 import cafe.navy.bedrock.paper.command.bedrock.BedrockCommand;
 import cafe.navy.bedrock.paper.command.item.ItemCommand;
+import cafe.navy.bedrock.paper.data.DataService;
 import cafe.navy.bedrock.paper.item.ItemManager;
 import cafe.navy.bedrock.paper.player.PlayerManager;
 import cafe.navy.bedrock.paper.realm.Realm;
@@ -37,6 +38,7 @@ public class Server implements Listener {
     private final @NonNull CommandRegistry commandRegistry;
     private final @NonNull ItemManager itemManager;
     private final @NonNull Map<UUID, Realm> realms;
+    private final @NonNull DataService dataService;
     private boolean enabled = false;
 
     /**
@@ -46,7 +48,8 @@ public class Server implements Listener {
      */
     public Server(final @NonNull JavaPlugin plugin) {
         this.plugin = plugin;
-        this.playerManager = new PlayerManager(this.plugin);
+        this.dataService = new DataService();
+        this.playerManager = new PlayerManager(this.dataService, this.plugin);
         this.itemManager = new ItemManager(this.plugin, this.playerManager);
         try {
             this.commandRegistry = new CommandRegistry(this.plugin);
@@ -63,6 +66,10 @@ public class Server implements Listener {
      */
     public boolean enabled() {
         return this.enabled;
+    }
+
+    public @NonNull DataService data() {
+        return this.dataService;
     }
 
     /**

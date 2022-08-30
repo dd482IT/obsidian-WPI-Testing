@@ -5,10 +5,15 @@ import cafe.navy.bedrock.paper.event.ClientEntityInteractEvent;
 import cafe.navy.bedrock.paper.exception.ClientEntityException;
 import cafe.navy.bedrock.paper.player.PlayerTarget;
 import cafe.navy.bedrock.paper.target.EntityTarget;
+import cafe.navy.bedrock.paper.util.InteractHand;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.WrappedEnumEntityUseAction;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -45,6 +50,7 @@ public class ClientEntityManager {
     }
 
     public void remove(final @NonNull ClientEntity entity) {
+        entity.remove();
         this.entities.remove(entity.uuid());
     }
 
@@ -56,12 +62,16 @@ public class ClientEntityManager {
                 final PlayerTarget target = server.players().getPlayer(player.getUniqueId()).get();
                 if (event.getPacketType() == PacketType.Play.Client.USE_ENTITY) {
                     final int id = event.getPacket().getIntegers().read(0);
+                    final WrappedEnumEntityUseAction action = event.getPacket().getEnumEntityUseActions().read(0);
+                    final InteractHand interactHand = action.getAction() == EnumWrappers.EntityUseAction.ATTACK ? InteractHand.OFF_HAND : InteractHand.MAIN;
                     for (final ClientEntity entity : entities.values()) {
                         if (entity.checkEntityId(id)) {
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
-                                    server.plugin().getServer().getPluginManager().callEvent(new ClientEntityInteractEvent(entity, target, player));
+                                    server.plugin().getServer().getPluginManager().callEvent(new ClientEntityInteractEvent(
+                                            entity, target, player, interactHand, action.getAction()
+                                    ));
                                 }
                             }.runTask(server.plugin());
                             break;
