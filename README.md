@@ -1,9 +1,5 @@
 # navy.cafe/bedrock
 
-A utility library, mainly used by navy.cafe's Minecraft server.
+A utility library for Paper 1.19+.
 
-# `bedrock-paper`
-
-- Client-side Entity API ([cafe.navy.bedrock.paper.entity](https://github.com/navy-cafe/bedrock/tree/master/paper/src/main/java/cafe/navy/bedrock/paper/entity))
-- Hologram API ([cafe.navy.bedrock.paper.hologram](https://github.com/navy-cafe/bedrock/tree/master/paper/src/main/java/cafe/navy/bedrock/paper/hologram))
-- Message API ([cafe.navy.bedrock.paper.message](https://github.com/navy-cafe/bedrock/tree/master/paper/src/main/java/cafe/navy/bedrock/paper/message))
+> [The item API has graduated into it's own project.](https://github.com/navy-cafe/items)
