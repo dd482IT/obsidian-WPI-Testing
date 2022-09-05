@@ -157,6 +157,17 @@ public class Message implements ComponentLike {
     }
 
     /**
+     * Appends a text {@link Component}.
+     *
+     * @param text the text content to append
+     * @return this
+     */
+    public @NonNull Message text(final @NonNull ComponentLike text) {
+        this.addPart(new ComponentMessagePart(text.asComponent(), this.placeholders));
+        return this;
+    }
+
+    /**
      * Appends text with the main style.
      *
      * @param text the text content to append
@@ -215,6 +226,27 @@ public class Message implements ComponentLike {
         Component component = Component.text(text, Colours.Light.BLUE, TextDecoration.UNDERLINED);
         if (url != null) {
             component = component.hoverEvent(HoverEvent.showText(Message.create("Click to open ").link(url).main(".")));
+            component = component.clickEvent(ClickEvent.openUrl(url));
+        }
+
+        return this.text(component);
+    }
+
+    /**
+     * Appends text with the link style.
+     *
+     * @param text the text content to append
+     * @return this
+     */
+    public @NonNull Message link(final @NonNull Component text,
+                                 final @Nullable String url) {
+        Component component = text.colorIfAbsent(Colours.Light.BLUE);
+        if (component.decoration(TextDecoration.ITALIC) == TextDecoration.State.NOT_SET) {
+            component = component.decoration(TextDecoration.ITALIC, TextDecoration.State.TRUE);
+        }
+
+        if (url != null) {
+            component = component.hoverEvent(HoverEvent.showText(Message.create().main("Click to open ").link(url).main(".")));
             component = component.clickEvent(ClickEvent.openUrl(url));
         }
 
