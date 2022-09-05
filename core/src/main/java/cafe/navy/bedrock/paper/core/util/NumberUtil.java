@@ -32,6 +32,11 @@ public class NumberUtil {
         return RANDOM.nextInt(max - min) + min;
     }
 
+    public static long between(final long min,
+                              final long max) {
+        return RANDOM.nextLong(max - min) + min;
+    }
+
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
