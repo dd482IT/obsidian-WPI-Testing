@@ -31,7 +31,7 @@ public interface Messages {
 
     static @NonNull Message createVersionMessage(final @NonNull ComponentLike name,
                                                  final @NonNull ComponentLike version,
-                                                 final @Nullable Component message,
+                                                 final @Nullable ComponentLike message,
                                                  final @NonNull ComponentLike... authors) {
         final Message res = Message.create();
 
@@ -59,7 +59,7 @@ public interface Messages {
         if (message != null) {
             res.newline();
             res.text("> ", Colours.Tones.DARKER_GRAY)
-                    .main(message);
+                    .main(message.asComponent());
         }
 
         return res;
