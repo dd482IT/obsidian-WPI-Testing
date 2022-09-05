@@ -115,6 +115,26 @@ public class Message implements ComponentLike {
     }
 
     /**
+     * Appends a {@link String} to the message with a gradient colour LERPed between {@code a} and {@code b}.
+     *
+     * @param text        the text
+     * @param a           the first colour
+     * @param b           the second coloour
+     * @param decorations the decoration set
+     * @return this
+     */
+    public @NonNull Message gradient(final @NonNull String text,
+                                     final @NonNull TextColor a,
+                                     final @NonNull TextColor b,
+                                     final @NonNull TextDecoration... decorations) {
+        return this.text(MINI_MESSAGE.deserialize(
+                "<gradient:" + a.asHexString() + ":" + b.asHexString() + ">" +
+                        text +
+                        "</gradient:" + a.asHexString() + ":" + b.asHexString() + ">"
+        ).decorate(decorations));
+    }
+
+    /**
      * Appends a newline to the message.
      *
      * @return this
