@@ -47,11 +47,21 @@ public class NumberUtil {
 
     public static <T> T choice(final @NonNull T... t) {
         int length = t.length;
+        if (length == 1) {
+            return t[0];
+        } else if (length == 0) {
+            throw new RuntimeException();
+        }
         return t[between(0, length)];
     }
 
     public static <T> T choice(final @NonNull List<T> list) {
         final int length = list.size();
+        if (length == 1) {
+            return list.get(0);
+        } else if (length == 0) {
+            throw new RuntimeException();
+        }
         return list.get(between(0, length));
     }
 
