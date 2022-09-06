@@ -1,6 +1,6 @@
 rootProject.name = "bedrock"
 
-projects("core", "plugin")
+projects("core", "paper", "plugin")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("VERSION_CATALOGS")

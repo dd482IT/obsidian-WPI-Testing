@@ -6,12 +6,18 @@ plugins {
     id("org.checkerframework") apply false
 }
 
+group = "cafe.navy.bedrock"
+version = "1.0.0"
+
 allprojects {
     group = "cafe.navy.bedrock"
     version = "1.0.0"
 }
 
 subprojects {
+    group = "cafe.navy.bedrock"
+    version = "1.0.0"
+
     apply(plugin = "java")
     apply(plugin = "org.checkerframework")
     apply(plugin = "maven-publish")

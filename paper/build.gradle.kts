@@ -12,7 +12,12 @@ repositories {
 
 dependencies {
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
-    api(libs.adventure.api)
+    api(projects.bedrockCore)
+    api(libs.cloud.core)
+    api(libs.cloud.paper)
+    api(libs.items.core)
+    api(libs.items.paper.core)
+    compileOnly(libs.protocollib)
 }
 
 tasks {
