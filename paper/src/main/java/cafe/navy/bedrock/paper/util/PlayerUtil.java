@@ -1,5 +1,6 @@
-package cafe.navy.bedrock.paper.player;
+package cafe.navy.bedrock.paper.util;
 
+import cafe.navy.bedrock.core.util.NumberUtil;
 import net.minecraft.network.protocol.game.ServerPacketListener;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
@@ -24,6 +25,10 @@ public class PlayerUtil {
         }
 
         return Optional.ofNullable(((CraftPlayer) bp).getHandle());
+    }
+
+    public static boolean isFalling(final @NonNull Player player) {
+        return player.getVelocity().getY() != NumberUtil.MINECRAFT_GRAVITATIONAL_CONSTANT;
     }
 
 }

@@ -15,8 +15,8 @@ dependencies {
     api(projects.bedrockCore)
     api(libs.cloud.core)
     api(libs.cloud.paper)
-    api(libs.items.core)
-    api(libs.items.paper.core)
+    compileOnly(libs.items.core)
+    compileOnly(libs.items.paper.core)
     compileOnly(libs.protocollib)
 }
 

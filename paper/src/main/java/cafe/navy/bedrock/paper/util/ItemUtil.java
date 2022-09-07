@@ -6,6 +6,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class ItemUtil {
 
+    public static @NonNull Point pointFromSlot(final int slot) {
+        return new Point(
+                slot % 9,
+                slot / 9
+        );
+    }
+
+
     public static void decrementOrRemoveHeld(final @NonNull Player player) {
         final ItemStack itemStack = player.getInventory().getItemInMainHand();
         if (ItemUtil.isNothing(itemStack)) {

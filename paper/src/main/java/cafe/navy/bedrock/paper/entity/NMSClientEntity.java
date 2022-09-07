@@ -1,7 +1,7 @@
 package cafe.navy.bedrock.paper.entity;
 
 import cafe.navy.bedrock.paper.exception.ClientEntityException;
-import cafe.navy.bedrock.paper.player.PlayerUtil;
+import cafe.navy.bedrock.paper.util.PlayerUtil;
 import cafe.navy.bedrock.paper.target.EntityTarget;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
