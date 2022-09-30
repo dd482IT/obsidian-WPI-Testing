@@ -2,7 +2,9 @@
 
 A modular framework for designing advanced experiences for Minecraft servers.
 
-![Obsidian](https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/99/Obsidian_JE3_BE2.png/revision/latest?cb=20200124042057)
+<p align="center">
+  <img width="300" height="300" src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/99/Obsidian_JE3_BE2.png/revision/latest?cb=20200124042057">
+</p>
 
 ---
 
