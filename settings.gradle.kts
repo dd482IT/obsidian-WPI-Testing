@@ -1,6 +1,6 @@
-rootProject.name = "bedrock"
+rootProject.name = "obsidian"
 
-projects("core", "paper", "plugin")
+projects("obsidian-api")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("VERSION_CATALOGS")
@@ -24,8 +24,4 @@ plugins {
  */
 fun projects(vararg names: String) {
     include(*names)
-
-    names.forEach {
-        project(":$it").name = "bedrock-$it"
-    }
 }

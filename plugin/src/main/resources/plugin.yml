@@ -1,4 +1,0 @@
-name: bedrock
-version: 1.0.0
-main: cafe.navy.bedrock.plugin.BedrockPlugin
-api-version: 1.19
