@@ -9,7 +9,7 @@ A modular framework for designing advanced experiences for Minecraft servers.
 Obsidian is designed with the following goals in mind:
 
 - to improve and expand upon the core Minecraft server's codebase
-- to provide well-defined, extensible APIs that wrap around the game's complex behaviour
+- to provide well-defined, thread-safe, and extensible APIs that wrap around the game's complex behaviour
 - to utilize modern Java's best practices, maintaining a balance between
   concise code and powerful capabilities
 - to support a wide-variety of use-cases, from simple minigames to complex server networks
@@ -50,6 +50,11 @@ Read [Getting Started with Obsidian](#) to learn more.
 
 > A framework for designing custom in-game entities, using a variety
 > of rendering methods and interaction handling capabilities.
+
+- render entities using [packets](#), [server APIs](#), or third-party tools such as [ModelEngine](#)
+- write advanced [interaction handlers](#) to design long-lived behaviours between entities
+- utilize [thread-safe APIs](#) to construct entities that run off the main thread, leaving more resources for the
+main thread to execute game-critical code
 
 ### **Items**
 
