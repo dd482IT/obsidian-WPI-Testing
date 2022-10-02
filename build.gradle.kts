@@ -1,21 +1,21 @@
 plugins {
     java
     `maven-publish`
-    id("io.papermc.paperweight.userdev") apply false
     id("com.github.johnrengelman.shadow") apply false
     id("org.checkerframework") apply false
+    id("io.papermc.paperweight.userdev") apply (false)
 }
 
-group = "cafe.navy.bedrock"
+group = "cafe.navy.obsidian"
 version = "1.0.0"
 
 allprojects {
-    group = "cafe.navy.bedrock"
+    group = "cafe.navy.obsidian"
     version = "1.0.0"
 }
 
 subprojects {
-    group = "cafe.navy.bedrock"
+    group = "cafe.navy.obsidian"
     version = "1.0.0"
 
     apply(plugin = "java")
@@ -29,6 +29,7 @@ subprojects {
         maven("https://jitpack.io")
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.broccol.ai/releases")
+        maven("https://repo.dmulloy2.net/repository/public/")
     }
 
     configure<JavaPluginExtension> {

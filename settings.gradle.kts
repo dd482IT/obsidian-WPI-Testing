@@ -1,6 +1,13 @@
 rootProject.name = "obsidian"
 
-projects("obsidian-api")
+setupCoreModule("api")
+setupCoreModule("entities")
+setupCoreModule("items")
+
+setupPaperModule("api")
+setupPaperModule("entities")
+setupPaperModule("items")
+setupPaperModule("plugin")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("VERSION_CATALOGS")
@@ -17,11 +24,17 @@ plugins {
     id("ca.stellardrift.polyglot-version-catalogs") version "5.0.0-SNAPSHOT"
 }
 
-/**
- * Renames a set of project IDs.
- *
- * @param names the list of projects to rename
- */
-fun projects(vararg names: String) {
-    include(*names)
+fun setupCoreModule(name: String) =
+    setupSubproject("obsidian-core-$name", file("obsidian-core/obsidian-core-$name"))
+
+fun setupPaperModule(name: String) =
+    setupSubproject("obsidian-paper-$name", file("obsidian-paper/obsidian-paper-$name"))
+
+fun setupSubproject(name: String, projectDirectory: File) = setupSubproject(name) {
+    projectDir = projectDirectory
+}
+
+inline fun setupSubproject(name: String, block: ProjectDescriptor.() -> Unit) {
+    include(name)
+    project(":$name").apply(block)
 }

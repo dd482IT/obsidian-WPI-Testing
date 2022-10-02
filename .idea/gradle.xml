@@ -9,10 +9,13 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/obsidian-api" />
-            <option value="$PROJECT_DIR$/obsidian-entities" />
-            <option value="$PROJECT_DIR$/obsidian-items" />
-            <option value="$PROJECT_DIR$/obsidian-users" />
+            <option value="$PROJECT_DIR$/obsidian-core/obsidian-core-api" />
+            <option value="$PROJECT_DIR$/obsidian-core/obsidian-core-entities" />
+            <option value="$PROJECT_DIR$/obsidian-core/obsidian-core-items" />
+            <option value="$PROJECT_DIR$/obsidian-paper/obsidian-paper-api" />
+            <option value="$PROJECT_DIR$/obsidian-paper/obsidian-paper-entities" />
+            <option value="$PROJECT_DIR$/obsidian-paper/obsidian-paper-items" />
+            <option value="$PROJECT_DIR$/obsidian-paper/obsidian-paper-plugin" />
           </set>
         </option>
       </GradleProjectSettings>

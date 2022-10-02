@@ -22,7 +22,7 @@ cleanly express complex interactions between the Minecraft game server and clien
 For example, without employing the use of a pre-existing library, creating performant custom entities can be a multi-day
 long hassle.
 Obsidian aims to be that library, scaling with the developer's needs as
-  
+
 Each Obsidian module is intended to be drop-in compatible with any existing Minecraft server. Depending on the use-case,
 developers may choose to base a gamemode entirely off of Obsidian, or utilize only a selection
 of Obsidian's modules and integrate with pre-existing software.
@@ -32,32 +32,30 @@ a bug worthy of fixing.
 
 ## Modules
 
-### **Obsidian**
+### `obsidian.core.api`
 
-> The core of Obsidian: a set of utility classes and interfaces that represent the range
-> of various 'actors' in a game world.
+> Obsidian's core API module defines interfaces that represent various actors of
+> a multiplayer game, such as the client, the server, and any other
+> related concepts that are used throughout the other modules.
 
 Read [Getting Started with Obsidian](#) to learn more.
 
-### **Users**
-
-> APIs behind users that can send and receive a variety of media, along
-> with an extensible user data system.
-
-### **Instancing**
-
-> Instancing of game world objects.
-
-### **Entities**
+### `obsidian.core.entities`
 
 > A framework for designing custom in-game entities, using a variety
 > of rendering methods and interaction handling capabilities.
 
+- abstracted APIs for designing custom entities
+
+### `obsidian.paper.entities`
+
+> An implementation of `obsidian.entities` using [Paper](#)'s APIs.
+
 - render entities using [packets](#), [server APIs](#), or third-party tools such as [ModelEngine](#)
 - write advanced [interaction handlers](#) to design long-lived behaviours between entities
 - utilize [thread-safe APIs](#) to construct entities that run off the main thread, leaving more resources for the
-main thread to execute game-critical code
+  main thread to execute game-critical code
 
-### **Items**
+### `obsidian.paper.entities.modelengine`
 
-> A custom item (and item type) API.
+> An integration with ModelEngine's APIs, providing entity render implementations and other useful utilities.
