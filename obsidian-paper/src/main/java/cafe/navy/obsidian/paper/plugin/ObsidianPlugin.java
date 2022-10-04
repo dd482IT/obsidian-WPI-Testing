@@ -5,7 +5,7 @@ import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.plugin.HelperPlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class ObsidianPlugin extends ExtendedJavaPlugin {
+public final class ObsidianPlugin extends ExtendedJavaPlugin {
 
     @Override
     public void enable() {

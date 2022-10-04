@@ -13,7 +13,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class BukkitAdapter {
+public final class BukkitAdapter {
 
     public static @NonNull Position adapt(final @NonNull Location location) {
         return new Position(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
@@ -32,14 +32,16 @@ public class BukkitAdapter {
         return Objects.requireNonNull(Bukkit.getPlayer(uuid));
     }
 
-
     public static @NonNull Player getPlayer(final @NonNull GamePlayer player)  {
         return getPlayer(player.uuid());
     }
 
-
     public static @NonNull Player getPlayer(final @NonNull GameClient client)  {
         return getPlayer(client.uuid());
+    }
+
+    private BukkitAdapter() {
+        throw new UnsupportedOperationException("This class cannot be instantiated.");
     }
 
 

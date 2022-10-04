@@ -1,16 +1,15 @@
-package cafe.navy.obsidian.paper.entity.renderer.type.player;
+package cafe.navy.obsidian.paper.entity.player;
 
 import cafe.navy.obsidian.core.client.GameClient;
 import cafe.navy.obsidian.core.client.GamePacket;
 import cafe.navy.obsidian.core.util.Position;
-import cafe.navy.obsidian.paper.GameProfileBuilder;
 import cafe.navy.obsidian.paper.api.packet.ProtocolLibGamePacket;
 import cafe.navy.obsidian.paper.api.packet.WrapperPlayServerEntityDestroy;
 import cafe.navy.obsidian.paper.api.packet.WrapperPlayServerEntityMetadata;
 import cafe.navy.obsidian.paper.api.packet.WrapperPlayServerNamedEntitySpawn;
 import cafe.navy.obsidian.paper.api.packet.WrapperPlayServerPlayerInfo;
 import cafe.navy.obsidian.paper.api.packet.WrapperPlayServerSpawnEntity;
-import cafe.navy.obsidian.paper.entity.renderer.EntityRenderer;
+import cafe.navy.obsidian.paper.entity.EntityRenderer;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
@@ -19,10 +18,12 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import me.lucko.helper.Schedulers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,76 +34,120 @@ import java.util.UUID;
 public class PlayerRenderer implements EntityRenderer {
 
     public static @NonNull PlayerRenderer of(final @NonNull PlayerOptions options) {
-        return new PlayerRenderer(options);
+        return new PlayerRenderer(
+                options.name(),
+                options.uuid(),
+                options.position(),
+                options.hasSkin(),
+                options.skinTexture(),
+                options.skinSignature(),
+                options.showName()
+        );
     }
 
-    private final @NonNull PlayerOptions options;
+    public static @NonNull PlayerRenderer of(final @NonNull String name,
+                                             final @NonNull UUID uuid,
+                                             final @NonNull Position position) {
+        return new PlayerRenderer(name, uuid, position, false, null, null, true);
+    }
+
+    public static @NonNull PlayerRenderer of(final @NonNull String name,
+                                             final @NonNull UUID uuid,
+                                             final @NonNull Position position,
+                                             final boolean showName) {
+        return new PlayerRenderer(name, uuid, position, false, null, null, showName);
+    }
+
+    public static @NonNull PlayerRenderer of(final @NonNull String name,
+                                             final @NonNull UUID uuid,
+                                             final @NonNull Position position,
+                                             final @NonNull String skinTexture,
+                                             final @NonNull String skinSignature,
+                                             final boolean showName) {
+        return new PlayerRenderer(name, uuid, position, false, skinTexture, skinSignature, showName);
+    }
+
+
+    private final @NonNull String name;
+    private final @NonNull UUID uuid;
+    private final @NonNull Position position;
     private final @NonNull CustomPlayerEntity entity;
     private final @NonNull PlayerInfoData infoData;
+    private final boolean showName;
     private final int passengerId;
 
-    /**
-     * Constructs {@code PlayerRenderer}.
-     *
-     * @param options the {@link PlayerOptions}
-     */
-    public PlayerRenderer(final @NonNull PlayerOptions options) {
-        this.options = options;
-        this.entity = new CustomPlayerEntity(options.position(), options.hasSkin()
-                ? new GameProfile(options.uuid(), options.name())
-                : GameProfileBuilder.getProfile(options.uuid(), options.name(), options.skinTexture(), options.skinSignature()));
+    private PlayerRenderer(final @NonNull String name,
+                           final @NonNull UUID uuid,
+                           final @NonNull Position position,
+                           final boolean hasSkin,
+                           final @Nullable String skinTexture,
+                           final @Nullable String skinSignature,
+                           final boolean showName) {
+        this.name = name;
+        this.uuid = uuid;
+        this.position = position;
+        this.showName = showName;
 
-        if (!this.options.showName()) {
+        final GameProfile profile = new GameProfile(uuid, name);
+        if (hasSkin) {
+            profile.getProperties().put("textures", new Property("textures", skinTexture, skinSignature));
+        }
+
+        this.entity = new CustomPlayerEntity(this.position, profile);
+
+        if (this.showName) {
+            this.passengerId = 0;
+        } else {
             // only increment entityId if necessary
             this.passengerId = net.minecraft.world.entity.Entity.nextEntityId();
-        } else {
-            this.passengerId = 0;
         }
 
         this.infoData = new PlayerInfoData(WrappedGameProfile.fromHandle(this.entity.getGameProfile()),
-                0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(this.options.name()));
+                0, EnumWrappers.NativeGameMode.CREATIVE, WrappedChatComponent.fromText(name));
     }
 
     @Override
     public void show(final @NonNull GameClient client) {
+        // scoreboard/meta info
         client.sendPacket(this.getPlayerAddInfoPacket());
         client.sendPacket(this.getPlayerMetadataPacket(this.entity.getBukkitEntity()));
 
+        // spawn player
         client.sendPacket(this.getPlayerSpawnPacket(
                 this.entity.getId(), this.entity.getUUID(),
-                this.options.position().x(), this.options.position().y(), this.options.position().z(),
-                this.options.position().yaw(), this.options.position().pitch()
+                this.position.x(), this.position.y(), this.position.z(),
+                this.position.yaw(), this.position.pitch()
         ));
 
-        client.sendPacket(this.getEntityLookPacket(this.entity.getId(), this.options.position().yaw(), this.options.position().pitch()));
-        client.sendPacket(this.getEntityRotatePacket(this.entity.getId(), this.options.position().yaw()));
+        // set rotation
+        client.sendPacket(this.getEntityLookPacket(this.entity.getId(), this.position.yaw(), this.position.pitch()));
+        client.sendPacket(this.getEntityRotatePacket(this.entity.getId(), this.position.yaw()));
 
-        Schedulers.sync().runLater(() -> {
-            // send remove packet later to allow entity skin to load on client
-            client.sendPacket(this.getPlayerRemoveInfoPacket());
-        }, 1);
-
-        if (!this.options.showName()) {
+        // if name should be hidden, spawn passenger to hide player nameplate
+        if (!this.showName) {
             client.sendPacket(this.getPassengerSpawnPacket(
                     this.passengerId,
-                    this.options.position().x(), this.options.position().y() + this.entity.getBbHeight(), this.options.position().z())
+                    this.position.x(), this.position.y() + this.entity.getBbHeight(), this.position.z())
             );
             client.sendPacket(this.getPassengerMetadataPacket(this.passengerId));
             client.sendPacket(this.getPassengerRidePacket(this.entity.getId(), this.passengerId));
         }
+
+        // send remove packet later to allow entity skin to load on client
+        Schedulers.sync().runLater(() -> {
+            client.sendPacket(this.getPlayerRemoveInfoPacket());
+        }, 1);
     }
 
     @Override
     public void hide(final @NonNull GameClient client) {
-        if (this.options.showName()) {
-            final WrapperPlayServerEntityDestroy packet = new WrapperPlayServerEntityDestroy();
+        final WrapperPlayServerEntityDestroy packet = new WrapperPlayServerEntityDestroy();
+        if (this.showName) {
             packet.setEntityIds(new int[]{this.entity.getId()});
-            client.sendPacket(new ProtocolLibGamePacket(packet.getHandle()));
         } else {
-            final WrapperPlayServerEntityDestroy packet = new WrapperPlayServerEntityDestroy();
             packet.setEntityIds(new int[]{this.entity.getId(), this.passengerId});
-            client.sendPacket(new ProtocolLibGamePacket(packet.getHandle()));
         }
+        client.sendPacket(new ProtocolLibGamePacket(packet.getHandle()));
     }
 
     @Override
@@ -165,7 +210,7 @@ public class PlayerRenderer implements EntityRenderer {
 
 
         final PacketContainer container = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        container.getIntegers().write(0, passengerId); // write entity ID
+        container.getIntegers().write(0, passengerId);
         container.getWatchableCollectionModifier().write(0, wrappedDataWatcher.getWatchableObjects());
         return new ProtocolLibGamePacket(container);
     }
@@ -174,7 +219,6 @@ public class PlayerRenderer implements EntityRenderer {
                                                        final int passengerId) {
         final PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
         container.getIntegers().write(0, entityId);
-//        container.getIntegers().write(0, 1);
         container.getIntegerArrays().write(0, new int[]{passengerId});
         return new ProtocolLibGamePacket(container);
     }

@@ -2,9 +2,9 @@ package cafe.navy.obsidian.paper.npc;
 
 import cafe.navy.obsidian.core.player.GamePlayer;
 import cafe.navy.obsidian.core.util.Position;
-import cafe.navy.obsidian.paper.entity.renderer.EntityRenderer;
-import cafe.navy.obsidian.paper.entity.renderer.type.hologram.HologramOptions;
-import cafe.navy.obsidian.paper.entity.renderer.type.hologram.HologramRenderer;
+import cafe.navy.obsidian.paper.entity.EntityRenderer;
+import cafe.navy.obsidian.paper.entity.hologram.HologramOptions;
+import cafe.navy.obsidian.paper.entity.hologram.HologramRenderer;
 import cafe.navy.obsidian.paper.npc.behaviour.NPCBehaviour;
 import org.bukkit.World;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -23,7 +23,7 @@ public class NPCState {
         return new Builder(position, world);
     }
 
-    private final @NonNull EntityRenderer<?> renderer;
+    private final @NonNull EntityRenderer renderer;
     private final @NonNull World world;
     private final @NonNull List<String> names;
     private final @NonNull Set<GamePlayer> players;
@@ -33,7 +33,7 @@ public class NPCState {
 
     public NPCState(final @NonNull Position position,
                     final @NonNull World world,
-                    final @NonNull EntityRenderer<?> renderer,
+                    final @NonNull EntityRenderer renderer,
                     final @NonNull List<String> names,
                     final @NonNull Set<NPCBehaviour> behaviours) {
         this.position = position;
@@ -42,7 +42,10 @@ public class NPCState {
         this.names = names;
         this.behaviours = behaviours;
         this.players = new HashSet<>();
-        this.hologram = new HologramRenderer(new HologramOptions(names, this.position.plusY(this.renderer.visualHeight()), 0.375));
+        this.hologram = HologramRenderer.of(HologramOptions
+                .newBuilder(this.position.plusY(this.renderer.visualHeight()))
+                .addLines(names)
+                .build());
     }
 
     public @NonNull World world() {
@@ -53,7 +56,7 @@ public class NPCState {
         return this.position;
     }
 
-    public @NonNull EntityRenderer<?> renderer() {
+    public @NonNull EntityRenderer renderer() {
         return this.renderer;
     }
 
@@ -64,13 +67,19 @@ public class NPCState {
     public void add(final @NonNull GamePlayer player) {
         this.players.add(player);
         this.renderer.show(player);
-        this.hologram.show(player);
+
+        if (this.hologram != null) {
+            this.hologram.show(player);
+        }
     }
 
     public void remove(final @NonNull GamePlayer player) {
         this.players.remove(player);
         this.renderer.hide(player);
-        this.hologram.hide(player);
+
+        if (this.hologram != null) {
+            this.hologram.hide(player);
+        }
     }
 
     public void tick() {
@@ -84,7 +93,7 @@ public class NPCState {
         private final @NonNull World world;
         private final @NonNull Set<NPCBehaviour> behaviours;
         private final @NonNull Position position;
-        private @Nullable EntityRenderer<?> renderer;
+        private @Nullable EntityRenderer renderer;
         private @Nullable List<String> names;
 
         private Builder(final @NonNull Position position,
@@ -99,7 +108,7 @@ public class NPCState {
             return this;
         }
 
-        public @NonNull Builder renderer(final @NonNull EntityRenderer<?> renderer) {
+        public @NonNull Builder renderer(final @NonNull EntityRenderer renderer) {
             this.renderer = renderer;
             return this;
         }

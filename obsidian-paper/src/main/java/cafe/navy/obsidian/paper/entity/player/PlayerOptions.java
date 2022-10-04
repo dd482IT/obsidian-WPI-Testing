@@ -1,4 +1,4 @@
-package cafe.navy.obsidian.paper.entity.renderer.type.player;
+package cafe.navy.obsidian.paper.entity.player;
 
 import cafe.navy.obsidian.core.util.Numbers;
 import cafe.navy.obsidian.core.util.Position;
@@ -11,7 +11,7 @@ import java.util.UUID;
 /**
  * {@code PlayerOptions} contains values used by a {@link PlayerRenderer} instance.
  */
-public class PlayerOptions {
+public final class PlayerOptions {
 
     public static @NonNull Builder builder(final @NonNull Position position) {
         return new Builder(position);
@@ -114,7 +114,7 @@ public class PlayerOptions {
     /**
      * {@code Builder} builds {@link PlayerOptions} instances.
      */
-    public static class Builder {
+    public static final class Builder {
 
         private @NonNull Position position;
         private @Nullable String name;

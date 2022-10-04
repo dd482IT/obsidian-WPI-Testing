@@ -1,4 +1,4 @@
-package cafe.navy.obsidian.paper.entity.renderer.type.player;
+package cafe.navy.obsidian.paper.entity.player;
 
 import cafe.navy.obsidian.core.util.Position;
 import cafe.navy.obsidian.paper.MinecraftHelpers;
@@ -8,9 +8,9 @@ import net.minecraft.world.entity.player.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * {@code CustomPlayerEntity} is a subclass of the {@link Player} for easier use with Obsidian.
+ * {@code CustomPlayerEntity} is a subclass of {@link Player}, for easier use with Obsidian API objects.
  */
-public class CustomPlayerEntity extends Player {
+public final class CustomPlayerEntity extends Player {
 
     /**
      * Constructs {@code CustomPlayerEntity}.

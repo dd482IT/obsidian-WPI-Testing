@@ -1,4 +1,4 @@
-package cafe.navy.obsidian.paper.entity.renderer.type.hologram;
+package cafe.navy.obsidian.paper.entity.hologram;
 
 import cafe.navy.obsidian.core.client.GameClient;
 import cafe.navy.obsidian.core.client.GamePacket;
@@ -7,7 +7,7 @@ import cafe.navy.obsidian.paper.api.packet.ProtocolLibGamePacket;
 import cafe.navy.obsidian.paper.api.packet.WrapperPlayServerEntityDestroy;
 import cafe.navy.obsidian.paper.api.packet.WrapperPlayServerEntityTeleport;
 import cafe.navy.obsidian.paper.api.packet.WrapperPlayServerSpawnEntity;
-import cafe.navy.obsidian.paper.entity.renderer.EntityRenderer;
+import cafe.navy.obsidian.paper.entity.EntityRenderer;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -23,7 +23,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * {@code HologramRenderer} renders one or more invisible armor stand entities with custom names.
+ */
 public class HologramRenderer implements EntityRenderer {
+
+    public static @NonNull HologramRenderer of(final @NonNull List<String> names,
+                                               final @NonNull Position position,
+                                               final double lineSpacing) {
+        return new HologramRenderer(names, position, lineSpacing);
+    }
+
+    public static @NonNull HologramRenderer of(final @NonNull HologramOptions options) {
+        return of(options.names(), options.position(), options.lineSpacing());
+    }
 
     private final @NonNull List<String> names;
     private final @NonNull Position position;
@@ -31,10 +44,19 @@ public class HologramRenderer implements EntityRenderer {
 
     private final @NonNull List<Integer> entityIds;
 
-    public HologramRenderer(final @NonNull HologramOptions options) {
-        this.names = options.names();
-        this.position = options.position();
-        this.lineSpacing = options.lineSpacing();
+    /**
+     * Constructs {@code HologramRenderer}.
+     *
+     * @param names       the hologram lines
+     * @param position    the hologram position
+     * @param lineSpacing the hologram's line spacing
+     */
+    private HologramRenderer(final @NonNull List<String> names,
+                             final @NonNull Position position,
+                             final double lineSpacing) {
+        this.names = names;
+        this.position = position;
+        this.lineSpacing = lineSpacing;
         this.entityIds = new ArrayList<>();
         for (int i = 0; i < this.names.size(); i++) {
             this.entityIds.add(Entity.nextEntityId());

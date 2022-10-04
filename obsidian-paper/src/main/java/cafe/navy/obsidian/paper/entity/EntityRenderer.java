@@ -1,4 +1,4 @@
-package cafe.navy.obsidian.paper.entity.renderer;
+package cafe.navy.obsidian.paper.entity;
 
 import cafe.navy.obsidian.core.client.GameClient;
 import cafe.navy.obsidian.core.util.Position;
