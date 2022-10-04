@@ -12,7 +12,7 @@ import java.util.List;
  */
 public final class HologramOptions {
 
-    public static @NonNull Builder newBuilder(final @NonNull Position position) {
+    public static @NonNull Builder builder(final @NonNull Position position) {
         return new Builder(position);
     }
 

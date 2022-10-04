@@ -30,9 +30,53 @@ of Obsidian's modules and integrate with pre-existing software.
 Obsidian aims to interact as little (or as much) with the world as necessary, considering all unexpected behaviour as
 a bug worthy of fixing.
 
+## APIs
+
+### `obsidian.entity`
+
+An API wrapping around client-sided entity rendering, providing a simple foundation for server software utilizing
+entities.
+
+```java
+GameClient client; // the target client
+Position position; // where we want the entity
+
+// configure the renderer
+PlayerOptions options=PlayerOptions
+        .builder(position)
+        .name("Cool NPC!")
+        .build();
+
+// construct the renderer and show to client
+PlayerRenderer.of(options)
+        .show(client);
+```
+
+### `obsidian.npc`
+
+An API providing state management and interaction handling for non-player characters, using `obsidian.entity` renderers.
+
+```java
+// create our 'default state'
+NPCState state=NPCState.builder(position,world)
+        .renderer(someRenderer)
+        // look at nearby players within 5 blocks
+        .withBehaviour(LookAtBehaviour.of(5))
+        .build();
+
+// create the NPC using our state, show to client
+NPC.newBuilder("cool-npc")
+        .renderer()
+        .defaultState(NPCState.builder())
+        .build()
+        .addClient(client);
+```
+
+TODO: interaction handling
+
 ## Modules
 
-### `obsidian.core.api`
+### `obsidian-core`
 
 > Obsidian's core API module defines interfaces that represent various actors of
 > a multiplayer game, such as the client, the server, and any other
@@ -40,22 +84,8 @@ a bug worthy of fixing.
 
 Read [Getting Started with Obsidian](#) to learn more.
 
-### `obsidian.core.entities`
+### `obsidian-paper`
 
-> A framework for designing custom in-game entities, using a variety
-> of rendering methods and interaction handling capabilities.
+> Platform implementation of Obsidian's APIs on [PaperMC](#).
 
-- abstracted APIs for designing custom entities
-
-### `obsidian.paper.entities`
-
-> An implementation of `obsidian.entities` using [Paper](#)'s APIs.
-
-- render entities using [packets](#), [server APIs](#), or third-party tools such as [ModelEngine](#)
-- write advanced [interaction handlers](#) to design long-lived behaviours between entities
-- utilize [thread-safe APIs](#) to construct entities that run off the main thread, leaving more resources for the
-  main thread to execute game-critical code
-
-### `obsidian.paper.entities.modelengine`
-
-> An integration with ModelEngine's APIs, providing entity render implementations and other useful utilities.
+Read [Using Obsidian with Paper](#) to learn more.

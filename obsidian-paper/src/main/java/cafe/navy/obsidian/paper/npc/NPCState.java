@@ -43,7 +43,7 @@ public class NPCState {
         this.behaviours = behaviours;
         this.players = new HashSet<>();
         this.hologram = HologramRenderer.of(HologramOptions
-                .newBuilder(this.position.plusY(this.renderer.visualHeight()))
+                .builder(this.position.plusY(this.renderer.visualHeight()))
                 .addLines(names)
                 .build());
     }
