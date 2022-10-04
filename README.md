@@ -67,7 +67,7 @@ NPCState state = NPCState.builder(position,world)
 // create the NPC using our state, show to client
 SimpleNPC.builder("cool-npc")
         .renderer()
-        .defaultState(NPCState.builder())
+        .defaultState(state)
         .build()
         .addClient(client);
 ```
