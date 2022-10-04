@@ -42,7 +42,7 @@ GameClient client; // the target client
 Position position; // where we want the entity
 
 // configure the renderer
-PlayerOptions options=PlayerOptions
+PlayerOptions options = PlayerOptions
         .builder(position)
         .name("Cool NPC!")
         .build();
@@ -58,14 +58,14 @@ An API providing state management and interaction handling for non-player charac
 
 ```java
 // create our 'default state'
-NPCState state=NPCState.builder(position,world)
+NPCState state = NPCState.builder(position,world)
         .renderer(someRenderer)
         // look at nearby players within 5 blocks
         .withBehaviour(LookAtBehaviour.of(5))
         .build();
 
 // create the NPC using our state, show to client
-NPC.newBuilder("cool-npc")
+SimpleNPC.builder("cool-npc")
         .renderer()
         .defaultState(NPCState.builder())
         .build()
