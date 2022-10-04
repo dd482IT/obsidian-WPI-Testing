@@ -1,13 +1,7 @@
 rootProject.name = "obsidian"
 
-setupCoreModule("api")
-setupCoreModule("entities")
-setupCoreModule("items")
-
-setupPaperModule("api")
-setupPaperModule("entities")
-setupPaperModule("items")
-setupPaperModule("plugin")
+include(":obsidian-core")
+include(":obsidian-paper")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("VERSION_CATALOGS")
@@ -24,17 +18,17 @@ plugins {
     id("ca.stellardrift.polyglot-version-catalogs") version "5.0.0-SNAPSHOT"
 }
 
-fun setupCoreModule(name: String) =
-    setupSubproject("obsidian-core-$name", file("obsidian-core/obsidian-core-$name"))
-
-fun setupPaperModule(name: String) =
-    setupSubproject("obsidian-paper-$name", file("obsidian-paper/obsidian-paper-$name"))
-
-fun setupSubproject(name: String, projectDirectory: File) = setupSubproject(name) {
-    projectDir = projectDirectory
-}
-
-inline fun setupSubproject(name: String, block: ProjectDescriptor.() -> Unit) {
-    include(name)
-    project(":$name").apply(block)
-}
+//fun setupCoreModule(name: String) =
+//    setupSubproject("obsidian-core-$name", file("obsidian-core/obsidian-core-$name"))
+//
+//fun setupPaperModule(name: String) =
+//    setupSubproject("obsidian-paper-$name", file("obsidian-paper/obsidian-paper-$name"))
+//
+//fun setupSubproject(name: String, projectDirectory: File) = setupSubproject(name) {
+//    projectDir = projectDirectory
+//}
+//
+//inline fun setupSubproject(name: String, block: ProjectDescriptor.() -> Unit) {
+//    include(name)
+//    project(":$name").apply(block)
+//}

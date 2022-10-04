@@ -1,0 +1,4 @@
+name: Obsidian
+main: cafe.navy.obsidian.paper.plugin.ObsidianPlugin
+api-version: 1.19
+version: ${version}
