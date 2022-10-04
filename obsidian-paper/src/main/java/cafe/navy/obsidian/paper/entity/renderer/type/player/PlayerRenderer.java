@@ -18,6 +18,7 @@ import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.mojang.authlib.GameProfile;
 import me.lucko.helper.Schedulers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -47,10 +48,10 @@ public class PlayerRenderer implements EntityRenderer {
      */
     public PlayerRenderer(final @NonNull PlayerOptions options) {
         this.options = options;
-        this.entity = new CustomPlayerEntity(options.position(), GameProfileBuilder
-                .getProfile(UUID.randomUUID(), options.name(),
-                        "ewogICJ0aW1lc3RhbXAiIDogMTY2NDg3NzQzNjUyNSwKICAicHJvZmlsZUlkIiA6ICJmMTYwZTMxMzJjYWM0YjRiOWM5OTk2NDQ1OGIxOWM0ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJGYWNrX1JvbiIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lNjI2NTY1ZjJmZDVkNGU1ZTQ1OGQ1MWZmOWI0MDZhNjAxN2Y4MDhlNzllNDRmNTBkZWM4NWRhMjA1ZjRlODU5IgogICAgfQogIH0KfQ==",
-                        "NbNpEBXhv0BptoTYXGxtYKWbopIRc1cSOXGkMBuQIieLUNlGWTHMDwnJCj1lrlIbsgJYmrYqxYe7wSiJq14q3iABu3VUjlGcvGrIYQyiE9fhJQCwiHaARwLgu4bwqrnjx2yXMTQZ9MQAmxeMPIZgL9BIdQlE4vb0iBgbE20xngSIyxjtOkWmD+sjn8yW9ILDcXhVBY8Nis9DYVMu2RI8u9HpkTyBsBprcDiFDkCXeyqpHYl+vgNZqxRQA7m9ENJ7FjFZRKT18Kq4VqqUNtcOOZpSmGB6juWsaHIUD8DXhW8/ipxmrXB79iUWR9wMUHCanyGuilA+fZbxwbRhBwnY8tjCLuQB1QOoDKJXXHpUedifhbeNkTsaxFWEjyOYJvN36aHZXOfUISe87tswWKBqpAdTr1ei6LwVEdOtHyaUVgu3tEyj0YDPo4FtyJd0ynTJ8ppgqtomQ2Ku7UyANDHf46O19GmPFVB9pmY3wozBu3kWwoImF0HN75dh1yQOZ1MRq/Sly8k4fZ/xEUASZa0qqm5stWbHmWixRqOqzmDnwNqNvpfFT47JQlE1oULREkejaCUzFFODdmkTW60kPAgriE71JuxOAvQ+0cVHkJyJTj+6JyFFDuB6GIsqqPnj8vMWHv90oVyTweIAJ4utIStoXJT+XyBP///QMc+Ym9OV88M="));
+        this.entity = new CustomPlayerEntity(options.position(), options.hasSkin()
+                ? new GameProfile(options.uuid(), options.name())
+                : GameProfileBuilder.getProfile(options.uuid(), options.name(), options.skinTexture(), options.skinSignature()));
+
         if (!this.options.showName()) {
             // only increment entityId if necessary
             this.passengerId = net.minecraft.world.entity.Entity.nextEntityId();
@@ -77,6 +78,7 @@ public class PlayerRenderer implements EntityRenderer {
         client.sendPacket(this.getEntityRotatePacket(this.entity.getId(), this.options.position().yaw()));
 
         Schedulers.sync().runLater(() -> {
+            // send remove packet later to allow entity skin to load on client
             client.sendPacket(this.getPlayerRemoveInfoPacket());
         }, 1);
 

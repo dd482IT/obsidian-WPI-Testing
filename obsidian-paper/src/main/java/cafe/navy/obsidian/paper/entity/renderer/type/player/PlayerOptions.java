@@ -21,6 +21,8 @@ public class PlayerOptions {
     private final @NonNull UUID uuid;
     private final @NonNull String name;
     private final boolean showName;
+    private final @Nullable String skinTexture;
+    private final @Nullable String skinSignature;
 
     /**
      * Constructs {@code PlayerOptions}.
@@ -33,11 +35,44 @@ public class PlayerOptions {
     public PlayerOptions(final @NonNull String name,
                          final @NonNull UUID uuid,
                          final @NonNull Position position,
-                         final boolean showName) {
+                         final boolean showName,
+                         final @Nullable String skinTexture,
+                         final @Nullable String skinSignature) {
         this.position = position;
         this.name = name;
         this.uuid = uuid;
         this.showName = showName;
+        this.skinTexture = skinTexture;
+        this.skinSignature = skinSignature;
+    }
+
+    /**
+     * Returns the skin's texture.
+     *
+     * @return the skin's texture
+     * @throws NullPointerException if the texture is null. check {@link #hasSkin()} before calling this method
+     */
+    public @NonNull String skinTexture() {
+        return Objects.requireNonNull(this.skinTexture);
+    }
+
+    /**
+     * Returns the skin's signature.
+     *
+     * @return the skin's signature
+     * @throws NullPointerException if the signature is null. check {@link #hasSkin()} before calling this method
+     */
+    public @NonNull String skinSignature() {
+        return Objects.requireNonNull(this.skinSignature);
+    }
+
+    /**
+     * Returns true if a skin is set.
+     *
+     * @return a boolean
+     */
+    public boolean hasSkin() {
+        return this.skinTexture != null && this.skinSignature != null;
     }
 
     /**
@@ -85,9 +120,36 @@ public class PlayerOptions {
         private @Nullable String name;
         private @Nullable UUID uuid;
         private boolean showName;
+        private @Nullable String skinTexture;
+        private @Nullable String skinSignature;
 
         private Builder(final @NonNull Position position) {
             this.position = position;
+        }
+
+        /**
+         * Removes the player's skin.
+         *
+         * @return this
+         */
+        public @NonNull Builder noSkin() {
+            this.skinTexture = null;
+            this.skinSignature = null;
+            return this;
+        }
+
+        /**
+         * Sets the player's skin.
+         *
+         * @param texture   the skin texture
+         * @param signature the skin texture's signature
+         * @return this
+         */
+        public @NonNull Builder skin(final @NonNull String texture,
+                                     final @NonNull String signature) {
+            this.skinTexture = texture;
+            this.skinSignature = signature;
+            return this;
         }
 
         /**
@@ -147,7 +209,9 @@ public class PlayerOptions {
                     Objects.requireNonNullElse(this.name, "player-" + Numbers.between(0, 100)),
                     Objects.requireNonNullElse(this.uuid, UUID.randomUUID()),
                     this.position,
-                    this.showName
+                    this.showName,
+                    this.skinTexture,
+                    this.skinSignature
             );
         }
 
